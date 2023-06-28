@@ -871,11 +871,11 @@ def train(model, data, args):
                   loss_weights=[1., args.lam_recon],
                   metrics={'capsnet': 'accuracy'})
 
-    """
+    # """
     # Training without data augmentation:
     model.fit([x_train, y_train], [y_train, x_train], batch_size=args.batch_size, epochs=args.epochs,
               validation_data=[[x_test, y_test], [y_test, x_test]], callbacks=[log, tb, checkpoint, lr_decay])
-    """
+    # """
 
     # Begin: Training with data augmentation ---------------------------------------------------------------------#
     def train_generator(x, y, batch_size, shift_fraction=0.):
@@ -889,11 +889,11 @@ def train(model, data, args):
     for epoch in range(args.epochs):
         print(f"Assume it's epoch {epoch+1}/{args.epochs}")
     # Training with data augmentation. If shift_fraction=0., also no augmentation.
-    # model.fit_generator(generator=train_generator(x_train, y_train, args.batch_size, args.shift_fraction),
-    #                     steps_per_epoch=int(y_train.shape[0] / args.batch_size),
-    #                     epochs=args.epochs,
-    #                     validation_data=[[x_test, y_test], [y_test, x_test]],
-    #                     callbacks=[timeout_call, log, checkpoint, lr_decay])
+    model.fit_generator(generator=train_generator(x_train, y_train, args.batch_size, args.shift_fraction),
+                        steps_per_epoch=int(y_train.shape[0] / args.batch_size),
+                        epochs=args.epochs,
+                        validation_data=[[x_test, y_test], [y_test, x_test]],
+                        callbacks=[timeout_call, log, checkpoint, lr_decay])
     # End: Training with data augmentation -----------------------------------------------------------------------#
 
     #model.save_weights(args.save_dir + '/trained_model.h5')
@@ -907,7 +907,7 @@ def train(model, data, args):
 
 def test(model, data, args):
     x_test, y_test = data
-    # y_pred, x_recon = model.predict(x_test, batch_size=100)
+    y_pred, x_recon = model.predict(x_test, batch_size=100)
     print('-'*30 + 'Begin: test' + '-'*30)
     # test_acc= np.sum(np.argmax(y_pred, 1) == np.argmax(y_test, 1))/y_test.shape[0]
     # print('Test acc:', test_acc)

@@ -255,7 +255,7 @@ def CapsNet(gene, input_shape, n_class, routings):
         decoder.add(layers.Conv2DTranspose(16, (3, 3), strides=(2, 2), padding="same"))
         decoder.add(layers.Conv2DTranspose(12, (3, 3), strides=(1, 1), padding="same"))
         decoder.add(layers.Activation("relu"))
-        decoder.summary()
+        # decoder.summary()
         decoder.add(layers.Reshape(target_shape=(56, 56, 3), name='out_recon'))
 
 
@@ -272,7 +272,7 @@ def CapsNet(gene, input_shape, n_class, routings):
         decoder.add(layers.Reshape(target_shape=(64, 64, 1), name='out_recon')) 
     else:
         raise NotImplementedError(f"Unknown decoder for shape {input_shape}")
-    decoder.summary()
+    # decoder.summary()
 
     # Models for training and evaluation (prediction)
     train_model = models.Model([inputs, y], [out_caps, decoder(masked_by_y)])
